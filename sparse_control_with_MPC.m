@@ -39,24 +39,24 @@ gamma = 0.2;
 alpha = 1;
 beta = 1; 
 % Lambda (regularization parameter) which is used in conventional method
-lambda_con = 0.0087;
+tilde_lambda_con = 0.0087;
 % Lambda which is used in proposed method
-lambda_pro = 0.0218;
+tilde_lambda_pro = 0.0218;
 % Matrix Psi
 Psi = [Phi; eye(n); eye(n)];
 % Matrix M (matrix which is used to find u)
 M = (Psi'*Psi) \ Psi';
 % Dimension number of Psi
-mu = d + 2*n;
+m = d + 2*n;
 % Saturation function
 sat = @(x) sign(x).*min(abs(x),1);
 
 % Initial vectors in conventional method
 % u1 is control signal which is generated in conventional method
-u1 = zeros(n, 1); z1 = zeros(mu, 1); v1 = zeros(mu, 1); 
+u1 = zeros(n, 1); z1 = zeros(m, 1); v1 = zeros(m, 1); 
 % Initial vectors in proposed method
 % u2 is control signal which is generated in proposed method
-u2 = zeros(n, 1); z2 = zeros(mu, 1); v2 = zeros(mu, 1); 
+u2 = zeros(n, 1); z2 = zeros(m, 1); v2 = zeros(m, 1); 
 
 % Value which is used to find z
 gamma_term = 1/(2*gamma + 1);
@@ -67,8 +67,8 @@ for k = 1:MAX_ITER
     % Update u,z,v in conventional method
     u1 = M*(z1 - v1);       
     z1(1:d) = gamma_term*(2*gamma* zeta + (Phi*u1 + v1(1:d)));
-    z1(d+1:n+d) = soft_thresholding(u1 + v1(d+1:n+d), gamma*lambda_con);
-    z1(n+d+1:mu) = sat(u1 + v1(n+d+1:mu));
+    z1(d+1:n+d) = soft_thresholding(u1 + v1(d+1:n+d), gamma*tilde_lambda_con);
+    z1(n+d+1:m) = sat(u1 + v1(n+d+1:m));
     v1 = v1 + Psi*u1 - z1;
 end
 % Computation time in conventional method
@@ -80,8 +80,8 @@ for k = 1:MAX_ITER
     % Update u,z,v in proposed method
     u2 = M*(z2 - v2);
     z2(1:d) = gamma_term*(2*gamma*zeta + (Phi*u2 + v2(1:d)));
-    z2(d+1:n+d) = firm_thresholding(u2 + v2(d+1:n+d), alpha*gamma*lambda_pro, alpha*beta);
-    z2(n+d+1:mu) = sat(u2 + v2(n+d+1:mu));
+    z2(d+1:n+d) = firm_thresholding(u2 + v2(d+1:n+d), alpha*gamma*tilde_lambda_pro, alpha*beta);
+    z2(n+d+1:m) = sat(u2 + v2(n+d+1:m));
     v2 = v2 + Psi*u2 - z2;
 end
 % Computation time in proposed method
