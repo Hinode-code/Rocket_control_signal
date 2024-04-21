@@ -1,4 +1,4 @@
-# Rocket_control_signal
+# Sparse_control_with_MCP
 These codes are used in numerical example for the paper "Design of Sparse Control with Minimax Concave Penalty"
 
 # Contents of this repository
