@@ -3,8 +3,8 @@ clear
 
 %% System model(rocket)
 % Plant matrixes
-A = [0 1 ; 0 0];
-b = [0;1];
+A = [0 1;0 0];
+b = [0; 1];
 % System size (Number of state)
 d = length(b);
 % Initial state
@@ -24,7 +24,7 @@ v = bd;
 Phi(:,end) = v;
 for j = 1:n-1
     v = Ad*v;
-    Phi(:,end-j) = v;
+    Phi(:,end - j) = v;
 end
 % Vector zeta
 zeta = -Ad^n*x0;
@@ -45,31 +45,31 @@ lambda_pro = 0.0218;
 % Matrix Psi
 Psi = [Phi; eye(n); eye(n)];
 % Matrix M (matrix which is used to find u)
-M = (Psi'*Psi)\Psi';
+M = (Psi'*Psi) \ Psi';
 % Dimension number of Psi
-mu = d+2*n;
+mu = d + 2*n;
 % Saturation function
-sat = @(x) sign(x).*min(abs(x),1);
+sat = @(x) sign(x). * min(abs(x),1);
 
 % Initial vectors in conventional method
 % u1 is control signal which is generated in conventional method
-u1 = zeros(n, 1); z1 = zeros(d+2*n, 1); v1 = zeros(d+2*n, 1); 
+u1 = zeros(n, 1); z1 = zeros(d + 2*n, 1); v1 = zeros(d + 2*n, 1); 
 % Initial vectors in proposed method
 % u2 is control signal which is generated in proposed method
-u2 = zeros(n, 1); z2 = zeros(d+2*n, 1); v2 = zeros(d+2*n, 1); 
+u2 = zeros(n, 1); z2 = zeros(d + 2*n, 1); v2 = zeros(d + 2*n, 1); 
 
 % Value which is used to find z
-gamma_term = 1 / (1 + 2*gamma);
+gamma_term = 1/(2*gamma + 1);
 %% Simulation
 tic
 % Repeat MAX_ITER times
 for k = 1:MAX_ITER
     % Update u,z,v in conventional method
-    u1 = M * (z1 - v1);       
-    z1(1:d) = gamma_term * (2 * gamma* zeta +  (Phi * u1 + v1(1:d)));
-    z1(d+1:n+d) = soft_thresholding(u1 + v1(d+1:n+d),gamma*lambda_con);
+    u1 = M*(z1 - v1);       
+    z1(1:d) = gamma_term*(2*gamma* zeta + (Phi*u1 + v1(1:d)));
+    z1(d+1:n+d) = soft_thresholding(u1 + v1(d+1:n+d), gamma*lambda_con);
     z1(n+d+1:mu) = sat(u1 + v1(n+d+1:mu));
-    v1 = v1 + Psi * u1 - z1;
+    v1 = v1 + Psi*u1 - z1;
 end
 % Computation time in conventional method
 com_con = toc;
@@ -78,19 +78,19 @@ tic
 % Repeat MAX_ITER times
 for k = 1:MAX_ITER
     % Update u,z,v in proposed method
-    u2 = M * (z2 - v2);
-    z2(1:d) = gamma_term * (2 * gamma * zeta + (Phi*u2 + v2(1:d)));
-    z2(d+1:n+d) = firm_thresholding(u2  + v2(d+1:n+d), alpha*gamma*lambda_pro, alpha*beta);
+    u2 = M*(z2 - v2);
+    z2(1:d) = gamma_term*(2*gamma*zeta + (Phi*u2 + v2(1:d)));
+    z2(d+1:n+d) = firm_thresholding(u2 + v2(d+1:n+d), alpha*gamma*lambda_pro, alpha*beta);
     z2(n+d+1:mu) = sat(u2 + v2(n+d+1:mu));
-    v2 = v2 + Psi * u2 - z2;
+    v2 = v2 + Psi*u2 - z2;
 end
 % Computation time in proposed method
 com_pro = toc;
 
 % Terminal state in conventional method
-terminal_state_con = Phi * u1 - repmat(zeta, 1, 1);
+terminal_state_con = Phi*u1 - repmat(zeta, 1, 1);
 % Terminal state in proposed method
-terminal_state_pro = Phi * u2 - repmat(zeta, 1, 1);
+terminal_state_pro = Phi*u2 - repmat(zeta, 1, 1);
 
 % l2 norm of terminal state in conventional method
 l2norm_con = sqrt(sum(terminal_state_con.^2, 1))';
