@@ -53,10 +53,10 @@ sat = @(x) sign(x).*min(abs(x),1);
 
 % Initial vectors in conventional method
 % u1 is control signal which is generated in conventional method
-u1 = zeros(n, 1); z1 = zeros(d + 2*n, 1); v1 = zeros(d + 2*n, 1); 
+u1 = zeros(n, 1); z1 = zeros(mu, 1); v1 = zeros(mu, 1); 
 % Initial vectors in proposed method
 % u2 is control signal which is generated in proposed method
-u2 = zeros(n, 1); z2 = zeros(d + 2*n, 1); v2 = zeros(d + 2*n, 1); 
+u2 = zeros(n, 1); z2 = zeros(mu, 1); v2 = zeros(mu, 1); 
 
 % Value which is used to find z
 gamma_term = 1/(2*gamma + 1);
