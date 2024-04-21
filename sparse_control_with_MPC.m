@@ -49,7 +49,7 @@ M = (Psi'*Psi) \ Psi';
 % Dimension number of Psi
 mu = d + 2*n;
 % Saturation function
-sat = @(x) sign(x). * min(abs(x),1);
+sat = @(x) sign(x).*min(abs(x),1);
 
 % Initial vectors in conventional method
 % u1 is control signal which is generated in conventional method
