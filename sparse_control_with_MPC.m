@@ -3,7 +3,7 @@ clear
 
 %% System model(rocket)
 % Plant matrixes
-A = [0 1;0 0];
+A = [0 1; 0 0];
 b = [0; 1];
 % System size (Number of state)
 d = length(b);
